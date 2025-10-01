@@ -1,0 +1,309 @@
+<!doctype html> 
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Azie Kesna Novianto Raharjo</title>
+  <meta name="description" content="Pesan manis untuk seseorang." />
+
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html,body { height:100%; font-family: "Segoe UI", Roboto, Arial, sans-serif; background:#000; color:#fff; }
+
+    .wrap {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg, #111 0%, #1a0a1a 100%);
+      position:relative;
+      overflow:hidden;
+      padding:20px;
+    }
+
+    .splash {
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.8));
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      z-index:30;
+      transition:opacity .4s ease, transform .4s ease;
+    }
+    .splash.hidden { opacity:0; pointer-events:none; transform:scale(.98); }
+
+    .touch-box {
+      padding:16px 26px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.06);
+      backdrop-filter: blur(6px);
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .touch-box h1 { font-size:20px; margin-bottom:6px; }
+    .touch-box p { font-size:13px; opacity:.85; }
+
+    .card { background: transparent; border-radius: 0; padding: 30px; text-align: center; box-shadow: none; }
+
+    .headline { font-size:34px; margin-bottom:8px; }
+    .sub { opacity:.85; margin-bottom:18px; }
+
+    .open-btn {
+      display:inline-block;
+      padding:12px 22px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#ff7bac,#ff4d6d);
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      cursor:pointer;
+      border:0;
+      box-shadow: 0 6px 18px rgba(255,75,110,0.14);
+    }
+
+    .gallery { margin-top:22px; display:flex; justify-content:center; }
+    .gallery img {
+      width:350px; height:350px;
+      border-radius:14px;
+      border:4px solid rgba(255,255,255,0.05);
+      object-fit:cover;
+      display:block;
+    }
+    @media (max-width:520px) {
+      .gallery img { width:280px; height:280px; }
+    }
+
+    .modal {
+      position:fixed; left:50%; top:50%;
+      transform:translate(-50%,-50%) scale(.98);
+      width:92%; max-width:640px;
+      background:#fff; color:#111;
+      border-radius:14px;
+      padding:20px;
+      box-shadow:0 30px 60px rgba(0,0,0,0.6);
+      z-index:60;
+      display:none;
+    }
+    .modal.show { display:block; }
+    .modal .body {
+      max-height:56vh; overflow:auto; line-height:1.6; font-size:15px;
+      padding-right:6px; white-space:pre-line;
+    }
+    .modal .close {
+      margin-top:12px; padding:8px 14px;
+      border-radius:999px; background:#eee; cursor:pointer;
+    }
+
+    .typewriter { display:inline-block; border-right:2px solid rgba(255,255,255,0.8); padding-right:6px; animation:blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { border-color: transparent; } }
+
+    .love {
+      position: fixed;
+      top: -10px;
+      font-size: 24px;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 9999;
+    }
+    @keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
+
+    #loveCheck { margin:20px 0; }
+    #loveCheck button {
+      margin:0 8px;
+      padding:8px 16px;
+      border-radius:20px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      background:#ff4d6d;
+      color:#fff;
+    }
+    #loveCheck p { margin-bottom:12px; }
+    #noMsg {
+      margin-top:10px;
+      color:#ff99cc;
+      font-style:italic;
+      font-size:14px;
+      display:none;
+      animation:fade 0.6s ease;
+    }
+
+    .kartun { width:100px; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+    /* tombol buka surat */
+    .open-letter { text-align: center; margin-top: 20px; display:none; }
+    .btn-buka {
+      background: #ff6b81;
+      color: white;
+      font-size: 18px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    .btn-buka:hover { background: #ff4757; transform: scale(1.05); }
+  </style>
+</head>
+<body>
+
+  <audio id="bgm" loop preload="auto">
+    <source src="assets/music.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="wrap">
+    <div class="card">
+      <div id="headline" class="headline">
+        <span class="typewriter" id="typed">Alooo Babyyyyy!</span>
+      </div>
+
+      <!-- Pertanyaan sayang -->
+      <div id="loveCheck">
+        <p>Sayang aku ngga?</p>
+        <button onclick="jawab(false)">Ngga</button>
+        <button onclick="jawab(true)">Sayang</button>
+        <div id="noMsg">Ga boleh, harus sayang! 💕</div>
+      </div>
+
+      <!-- Tombol buka surat -->
+      <div class="open-letter" id="openLetterBox">
+        <button class="btn-buka" id="openLetter">Buka Surat 💌</button>
+      </div>
+
+      <div class="gallery">
+        <img id="slide" src="assets/photo1.jpg" alt="Foto">
+      </div>
+    </div>
+
+    <!-- Modal surat -->
+    <div class="modal" id="modal">
+      <div style="text-align:center; margin-bottom:20px;">
+        <img src="assets/kartun.png" class="kartun" alt="kartun lucu" />
+      </div>
+      <div class="body" id="letterContent"></div>
+      <div style="text-align:right;">
+        <button class="close" id="closeModal">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Splash screen -->
+    <div class="splash" id="splash">
+      <div style="text-align:center; color:#fff;">
+        <h2 style="font-size:28px; margin-bottom:6px;">Ganteng banget sayang pacarnya siapaa</h2>
+        <div class="touch-box" id="startBtn">
+          <h1>Alooo Babyyy!</h1>
+          <p>Ketuk untuk masuk…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const startBtn = document.getElementById('startBtn');
+    const bgm = document.getElementById('bgm');
+    const typedEl = document.getElementById('typed');
+    const openLetterBtn = document.getElementById('openLetter');
+    const openLetterBox = document.getElementById('openLetterBox');
+    const modal = document.getElementById('modal');
+    const closeModal = document.getElementById('closeModal');
+    const noMsg = document.getElementById('noMsg');
+
+    const texts = ["Alooo Babyyy!", "Iloveyouuumoreeee 💕", "Sentuh untuk membuka surat"];
+    let tIdx = 0, ch = 0;
+    function typeLoop(){
+      const txt = texts[tIdx];
+      typedEl.textContent = txt.slice(0, ch);
+      ch++;
+      if(ch > txt.length){
+        setTimeout(()=>{ ch = 0; tIdx = (tIdx+1) % texts.length; }, 1200);
+      }
+      setTimeout(typeLoop, 120);
+    }
+    typeLoop();
+
+    function startExperience(){
+      splash.classList.add('hidden');
+      setTimeout(()=>{ splash.style.display='none'; }, 420);
+      bgm.play().catch(()=>{});
+    }
+    startBtn.addEventListener('click', startExperience);
+
+    openLetterBtn.addEventListener('click', ()=>{
+      modal.classList.add('show');
+      document.getElementById("letterContent").innerHTML = "";
+      typeLetter(surat,"letterContent",40);
+    });
+    closeModal.addEventListener('click', ()=> modal.classList.remove('show'));
+
+    /* ✅ Slide foto */
+    const photos = ["assets/photo1.jpg","assets/photo2.jpg","assets/photo4.jpg","assets/photo5.jpg","assets/photo6.jpg","assets/photo7.jpg","assets/photo8.jpg"];
+    let idx = 0;
+    const slide = document.getElementById("slide");
+    setInterval(()=>{
+      idx = (idx+1) % photos.length;
+      slide.src = photos[idx];
+    }, 3000);
+
+    function createLove() {
+      const love = document.createElement("div");
+      love.classList.add("love");
+      love.innerText = "❤";
+      love.style.left = Math.random() * window.innerWidth + "px";
+      love.style.fontSize = Math.random() * 25 + 20 + "px"; 
+      const colors = ["#ff4d6d","#ff7bac","#ff1493","#ff3366","#ff99cc"];
+      love.style.color = colors[Math.floor(Math.random()*colors.length)];
+      love.style.animationDuration = Math.random() * 3 + 3 + "s";
+      document.body.appendChild(love);
+      setTimeout(() => { love.remove(); }, 6000);
+    }
+    setInterval(createLove, 400);
+
+    function jawab(isSayang){
+      if(!isSayang){
+        noMsg.style.display = "block";
+      } else {
+        openLetterBox.style.display = "block"; // tombol muncul
+        document.getElementById("loveCheck").style.display = "none";
+      }
+    }
+
+    const surat = `Alooo Babyy! 💌
+
+Tetap semangat yaa! Aku tau kamu kuat, meskipun masalah yang datang ngga selalu ringan. 
+Aku selalu ada di sini buat dengerin kamu, nemenin kamu, meskipun cuma dari jauh. 
+Aku ngerti banyak hal yang bikin kamu capek, tapi jangan nyerah yaa! 
+Aku percaya kamu bisa lewatin semuanya. Aku mungkin belum bisa bantu banyak, 
+tapi aku bakal selalu ada buat kamu, kapan pun kamu butuh 💞
+
+Every day, I'm so proud of you. Aku selalu jatuh cinta lagi dan lagi, 
+dan ngobrol sama kamu tuh bikin aku seneng banget. 
+Walaupun ngga tiap hari rasanya bahagia, tapi selama masih ada kamu, 
+semuanya terasa lebih baik. Jadi, kalau ada apa-apa, cerita aja ke aku, 
+jangan dipendem sendiri 🌸
+
+Terakhir,  
+Aku sayanggg banget samaa kamuuu! 🐼💕`;
+
+    function typeLetter(text, elementId, speed=40){
+      let i=0;
+      function typing(){
+        if(i < text.length){
+          document.getElementById(elementId).innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typing, speed);
+        }
+      }
+      typing();
+    }
+  </script>
+</body>
+</html>
